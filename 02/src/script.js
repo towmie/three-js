@@ -1,6 +1,16 @@
 import * as THREE from "three";
 import gsap from "gsap";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import GUI from "lil-gui";
+
+const gui = new GUI();
+const globalDebugProps = {
+  color: "#ff0000",
+  spin: () => {
+    gsap.to(mesh.rotation, { duration: 1, y: mesh.rotation.y + Math.PI * 2 });
+  },
+  subdivisions: 2,
+};
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -12,20 +22,45 @@ const scene = new THREE.Scene();
  * Objects
  */
 const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-const mesh = new THREE.Mesh(geometry, material);
-
-scene.add(mesh);
-
-gsap.to(mesh.position, {
-  duration: 1,
-  delay: 1,
-  x: 2,
-  yoyo: true,
-  repeat: 1,
-  ease: "power1.inOut",
+const material = new THREE.MeshBasicMaterial({
+  color: globalDebugProps.color,
+  wireframe: true,
 });
 
+// geometry.setAttribute("position", positionsAttribute);
+
+const mesh = new THREE.Mesh(geometry, material);
+
+gui.add(mesh.position, "x").min(-3).max(3).step(0.01).name("position x");
+gui.add(mesh.position, "y").min(-3).max(3).step(0.01).name("position y");
+gui.add(mesh.position, "z").min(-3).max(3).step(0.01).name("position z");
+gui.add(mesh, "visible").name("visible");
+gui.add(material, "wireframe").name("wireframe");
+gui.add(globalDebugProps, "spin").name("spin");
+gui
+  .add(globalDebugProps, "subdivisions")
+  .min(1)
+  .max(10)
+  .step(1)
+  .name("subdivisions")
+  .onFinishChange(() => {
+    mesh.geometry.dispose();
+    const newGeometry = new THREE.BoxGeometry(
+      1,
+      1,
+      1,
+      globalDebugProps.subdivisions,
+      globalDebugProps.subdivisions,
+      globalDebugProps.subdivisions
+    );
+    mesh.geometry = newGeometry;
+  });
+
+gui.addColor(globalDebugProps, "color").onChange(() => {
+  material.color.set(globalDebugProps.color);
+});
+
+scene.add(mesh);
 /**
  * Sizes
  */
