@@ -1,6 +1,9 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import GUI from "lil-gui";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 
+const gui = new GUI();
 const loader = new THREE.TextureLoader();
 
 const doorColorTexture = loader.load("/textures/door/color.jpg");
@@ -12,7 +15,7 @@ const heightTexture = loader.load("/textures/door/height.jpg");
 const normalTexture = loader.load("/textures/door/normal.jpg");
 const metalnessTexture = loader.load("/textures/door/metalness.jpg");
 const roughnessTexture = loader.load("/textures/door/roughness.jpg");
-const matcapTexture = loader.load("/textures/matcaps/1.png");
+const matcapTexture = loader.load("/textures/matcaps/8.png");
 const gradientTexture = loader.load("/textures/gradients/3.jpg");
 
 doorColorTexture.colorSpace = THREE.SRGBColorSpace;
@@ -31,34 +34,42 @@ const scene = new THREE.Scene();
  * Object
  */
 
-// const material = new THREE.MeshBasicMaterial({
-//   map: doorColorTexture,
-//   side: THREE.DoubleSide,
-// });
+// const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+// const pointLight = new THREE.PointLight(0xffffff, 30);
 
-const matObject = {
-  color: new THREE.MeshBasicMaterial({ map: doorColorTexture }),
-  alpha: new THREE.MeshBasicMaterial({
-    map: doorAlphaTexture,
-    transparent: true,
-  }),
-  ambientOcclusion: new THREE.MeshBasicMaterial({
-    map: doorAmbientOcclusionTexture,
-  }),
-  height: new THREE.MeshBasicMaterial({ map: heightTexture }),
-  normal: new THREE.MeshBasicMaterial({ map: normalTexture }),
-  metalness: new THREE.MeshBasicMaterial({ map: metalnessTexture }),
-  roughness: new THREE.MeshBasicMaterial({ map: roughnessTexture }),
-  matcap: new THREE.MeshMatcapMaterial({ map: matcapTexture }),
-  gradient: new THREE.MeshBasicMaterial({ map: gradientTexture }),
-};
+// pointLight.position.x = 2;
+// pointLight.position.y = 3;
+// pointLight.position.z = 4;
 
-const material = new THREE.MeshMatcapMaterial();
-material.matcap = matcapTexture;
+// scene.add(pointLight);
+// scene.add(ambientLight);
 
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material);
+const rgbeLoader = new RGBELoader();
+rgbeLoader.load("/textures/environmentMap/2k.hdr", (texture) => {
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+  scene.background = texture;
+  scene.environment = texture;
+});
+
+const material = new THREE.MeshStandardMaterial();
+material.metalness = 1;
+material.roughness = 1;
+material.map = doorColorTexture;
+material.aoMap = doorAmbientOcclusionTexture;
+material.displacementMap = heightTexture;
+material.displacementScale = 0.1;
+material.metalnessMap = metalnessTexture;
+material.roughnessMap = roughnessTexture;
+material.normalMap = normalTexture;
+// material.alphaMap = doorAlphaTexture;
+// material.transparent = true;
+
+gui.add(material, "metalness").min(0).max(1).step(0.01);
+gui.add(material, "roughness").min(0).max(1).step(0.01);
+
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 64, 64), material);
 const tourus = new THREE.Mesh(
-  new THREE.TorusGeometry(0.7, 0.2, 16, 100),
+  new THREE.TorusGeometry(0.7, 0.2, 64, 128),
   material
 );
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 100, 100), material);
