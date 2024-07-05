@@ -41,13 +41,57 @@ const graveSizes = {
   depth: 0.2,
 };
 
+// Textures
+const textureLoader = new THREE.TextureLoader();
+
+const floorTexture = textureLoader.load("/floor/alpha.jpg");
+
+const floorColorTexture = textureLoader.load(
+  "./floor/coast_sand_rocks_02_1k/coast_sand_rocks_02_diff_1k.jpg"
+);
+const floorARMTexture = textureLoader.load(
+  "./floor/coast_sand_rocks_02_1k/coast_sand_rocks_02_arm_1k.jpg"
+);
+const floorNormalTexture = textureLoader.load(
+  "./floor/coast_sand_rocks_02_1k/coast_sand_rocks_02_nor_gl_1k.jpg"
+);
+const floorDispTexture = textureLoader.load(
+  "./floor/coast_sand_rocks_02_1k/coast_sand_rocks_02_disp_1k.jpg"
+);
+
+floorColorTexture.repeat.set(8, 8);
+floorARMTexture.repeat.set(8, 8);
+floorDispTexture.repeat.set(8, 8);
+floorNormalTexture.repeat.set(8, 8);
+
+floorColorTexture.wrapS = THREE.RepeatWrapping;
+floorColorTexture.wrapT = THREE.RepeatWrapping;
+floorARMTexture.wrapS = THREE.RepeatWrapping;
+floorARMTexture.wrapT = THREE.RepeatWrapping;
+floorDispTexture.wrapS = THREE.RepeatWrapping;
+floorDispTexture.wrapT = THREE.RepeatWrapping;
+floorNormalTexture.wrapS = THREE.RepeatWrapping;
+floorNormalTexture.wrapT = THREE.RepeatWrapping;
+
+floorColorTexture.colorSpace = THREE.SRGBColorSpace;
 /**
  * House
  */
 
 const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(20, 20),
-  new THREE.MeshStandardMaterial()
+  new THREE.PlaneGeometry(20, 20, 100, 100),
+  new THREE.MeshStandardMaterial({
+    alphaMap: floorTexture,
+    transparent: true,
+    map: floorColorTexture,
+    aoMap: floorARMTexture,
+    roughnessMap: floorARMTexture,
+    metalnessMap: floorARMTexture,
+    normalMap: floorNormalTexture,
+    displacementMap: floorDispTexture,
+    displacementBias: 0.3,
+    displacementScale: -0.2,
+  })
 );
 floor.rotation.x = -Math.PI * 0.5;
 
