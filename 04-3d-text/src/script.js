@@ -16,13 +16,12 @@ const canvas = document.querySelector("canvas.webgl");
 
 // Scene
 const scene = new THREE.Scene();
-scene.add(acsis);
 
 /**
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
-const matcapTexture = textureLoader.load("/textures/matcaps/1.png");
+const matcapTexture = textureLoader.load("/textures/matcaps/8.png");
 matcapTexture.colorSpace = THREE.SRGBColorSpace;
 
 /**
