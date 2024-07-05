@@ -44,6 +44,8 @@ const graveSizes = {
 // Textures
 const textureLoader = new THREE.TextureLoader();
 
+// Floor textures
+
 const floorTexture = textureLoader.load("/floor/alpha.jpg");
 
 const floorColorTexture = textureLoader.load(
@@ -74,6 +76,42 @@ floorNormalTexture.wrapS = THREE.RepeatWrapping;
 floorNormalTexture.wrapT = THREE.RepeatWrapping;
 
 floorColorTexture.colorSpace = THREE.SRGBColorSpace;
+
+// Wall textures
+
+const wallColorTexture = textureLoader.load(
+  "./wall/castle_brick_broken_06_1k/castle_brick_broken_06_diff_1k.jpg"
+);
+const wallARMTexture = textureLoader.load(
+  "./wall/castle_brick_broken_06_1k/castle_brick_broken_06_arm_1k.jpg"
+);
+const wallNormalTexture = textureLoader.load(
+  "./wall/castle_brick_broken_06_1k/castle_brick_broken_06_nor_gl_1k.jpg"
+);
+
+wallColorTexture.colorSpace = THREE.SRGBColorSpace;
+
+// Roof textures
+
+const roofColorTexture = textureLoader.load(
+  "./roof/roof_slates_02_1k/roof_slates_02_diff_1k.jpg"
+);
+const roofARMTexture = textureLoader.load(
+  "./roof/roof_slates_02_1k/roof_slates_02_arm_1k.jpg"
+);
+const roofNormalTexture = textureLoader.load(
+  "./roof/roof_slates_02_1k/roof_slates_02_nor_gl_1k.jpg"
+);
+
+roofColorTexture.repeat.set(3, 1);
+roofARMTexture.repeat.set(3, 1);
+roofNormalTexture.repeat.set(3, 1);
+
+roofColorTexture.wrapS = THREE.RepeatWrapping;
+roofARMTexture.wrapS = THREE.RepeatWrapping;
+roofNormalTexture.wrapS = THREE.RepeatWrapping;
+
+roofColorTexture.colorSpace = THREE.SRGBColorSpace;
 /**
  * House
  */
@@ -100,14 +138,26 @@ const houseGroup = new THREE.Group();
 // Walls
 const walls = new THREE.Mesh(
   new THREE.BoxGeometry(houseSize.width, houseSize.height, houseSize.depth),
-  new THREE.MeshStandardMaterial()
+  new THREE.MeshStandardMaterial({
+    map: wallColorTexture,
+    aoMap: wallARMTexture,
+    roughnessMap: wallARMTexture,
+    metalnessMap: wallARMTexture,
+    normalMap: wallNormalTexture,
+  })
 );
 walls.position.y = houseSize.height / 2;
 
 // Roof
 const roof = new THREE.Mesh(
   new THREE.ConeGeometry(roofSize.width, roofSize.height, roofSize.depth),
-  new THREE.MeshStandardMaterial()
+  new THREE.MeshStandardMaterial({
+    map: roofColorTexture,
+    aoMap: roofARMTexture,
+    roughnessMap: roofARMTexture,
+    metalnessMap: roofARMTexture,
+    normalMap: roofNormalTexture,
+  })
 );
 roof.position.y = houseSize.height + roofSize.height / 2;
 roof.rotation.y = Math.PI * 0.25;
