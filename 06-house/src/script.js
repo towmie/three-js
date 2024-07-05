@@ -34,6 +34,13 @@ const roofSize = {
   height: 1.5,
   depth: 4,
 };
+
+const graveSizes = {
+  width: 0.6,
+  height: 0.8,
+  depth: 0.2,
+};
+
 /**
  * House
  */
@@ -61,8 +68,67 @@ const roof = new THREE.Mesh(
 roof.position.y = houseSize.height + roofSize.height / 2;
 roof.rotation.y = Math.PI * 0.25;
 
-houseGroup.add(walls, roof);
-scene.add(floor, houseGroup);
+// Door
+const door = new THREE.Mesh(
+  new THREE.PlaneGeometry(2.2, 2.2),
+  new THREE.MeshStandardMaterial()
+);
+door.position.z = houseSize.depth / 2 + 0.01;
+door.position.y = 1;
+
+// Bushes
+
+const bushGeometry = new THREE.SphereGeometry(1, 16, 16);
+const bushMaterial = new THREE.MeshStandardMaterial();
+
+const bush1 = new THREE.Mesh(bushGeometry, bushMaterial);
+bush1.position.set(0.8, 0.2, 2.2);
+bush1.scale.setScalar(0.5);
+
+const bush2 = new THREE.Mesh(bushGeometry, bushMaterial);
+bush2.position.set(1.4, 0.1, 2.1);
+bush2.scale.setScalar(0.25);
+
+const bush3 = new THREE.Mesh(bushGeometry, bushMaterial);
+bush3.position.set(-0.8, 0.1, 2.2);
+bush3.scale.setScalar(0.4);
+
+const bush4 = new THREE.Mesh(bushGeometry, bushMaterial);
+bush4.position.set(-1, 0.05, 2.6);
+bush4.scale.setScalar(0.15);
+
+// Graves
+
+const graveGeometry = new THREE.BoxGeometry(
+  graveSizes.width,
+  graveSizes.height,
+  graveSizes.depth
+);
+const graveMaterial = new THREE.MeshStandardMaterial();
+
+const graves = new THREE.Group();
+
+for (let i = 0; i < 30; i++) {
+  const grave = new THREE.Mesh(graveGeometry, graveMaterial);
+  const gravesRadius = Math.random() * 4 + 4;
+
+  const angle = Math.random() * Math.PI * 2;
+  const x = Math.cos(angle) * gravesRadius;
+  const z = Math.sin(angle) * gravesRadius;
+
+  grave.position.x = x;
+  grave.position.z = z;
+  grave.position.y = Math.random() * 0.4;
+  grave.rotation.x = (Math.random() - 0.5) * 0.5;
+  grave.rotation.y = (Math.random() - 0.5) * 0.5;
+  grave.rotation.z = (Math.random() - 0.5) * 0.5;
+  //   grave.rotation.y = (Math.random() - 0.5) * Math.PI;
+  grave.scale.setScalar(Math.random() * 0.5 + 0.5);
+  graves.add(grave);
+}
+
+houseGroup.add(walls, roof, door, bush1, bush2, bush3, bush4);
+scene.add(floor, houseGroup, graves);
 /**
  * Lights
  */
