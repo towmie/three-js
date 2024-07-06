@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Timer } from "three/addons/misc/Timer.js";
+import { Sky } from "three/examples/jsm/objects/Sky.js";
 import GUI from "lil-gui";
 
 /**
@@ -8,6 +9,14 @@ import GUI from "lil-gui";
  */
 // Debug
 const gui = new GUI();
+
+const sky = new Sky();
+sky.scale.setScalar(100);
+sky.material.uniforms.turbidity.value = 10;
+sky.material.uniforms.rayleigh.value = 2;
+sky.material.uniforms.mieCoefficient.value = 0.1;
+sky.material.uniforms.mieDirectionalG.value = 0.95;
+sky.material.uniforms.sunPosition.value = new THREE.Vector3(0.3, -0.038, -0.95);
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -302,18 +311,15 @@ for (let i = 0; i < 30; i++) {
   graves.add(grave);
 }
 
-scene.add(floor, houseGroup, graves);
 /**
  * Lights
  */
 // Ambient light
 const ambientLight = new THREE.AmbientLight("#86cdff", 0.275);
-scene.add(ambientLight);
 
 // Directional light
 const directionalLight = new THREE.DirectionalLight("#86cdff", 1);
 directionalLight.position.set(3, 2, -8);
-scene.add(directionalLight);
 
 const doorLight = new THREE.PointLight("#ff7d46", 5);
 doorLight.position.set(0, 2.2, 2.7);
@@ -336,6 +342,8 @@ houseGroup.add(
   ghost2,
   ghost3
 );
+
+scene.add(directionalLight, floor, houseGroup, graves, ambientLight, sky);
 
 window.addEventListener("resize", () => {
   // Update sizes
