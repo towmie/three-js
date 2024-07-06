@@ -298,7 +298,6 @@ for (let i = 0; i < 30; i++) {
   grave.rotation.x = (Math.random() - 0.5) * 0.5;
   grave.rotation.y = (Math.random() - 0.5) * 0.5;
   grave.rotation.z = (Math.random() - 0.5) * 0.5;
-  //   grave.rotation.y = (Math.random() - 0.5) * Math.PI;
   grave.scale.setScalar(Math.random() * 0.5 + 0.5);
   graves.add(grave);
 }
@@ -319,7 +318,25 @@ scene.add(directionalLight);
 const doorLight = new THREE.PointLight("#ff7d46", 5);
 doorLight.position.set(0, 2.2, 2.7);
 
-houseGroup.add(walls, roof, door, bush1, bush2, bush3, bush4, doorLight);
+// Ghost
+const ghost1 = new THREE.PointLight("#ff0000", 6);
+const ghost2 = new THREE.PointLight("#ff0088", 6);
+const ghost3 = new THREE.PointLight("#8800ff", 6);
+
+houseGroup.add(
+  walls,
+  roof,
+  door,
+  bush1,
+  bush2,
+  bush3,
+  bush4,
+  doorLight,
+  ghost1,
+  ghost2,
+  ghost3
+);
+
 window.addEventListener("resize", () => {
   // Update sizes
   sizes.width = window.innerWidth;
@@ -371,6 +388,34 @@ const tick = () => {
   // Timer
   timer.update();
   const elapsedTime = timer.getElapsed();
+
+  //   Update ghost
+  const ghost1Angle = elapsedTime * 0.5;
+  ghost1.position.x = Math.cos(ghost1Angle) * 4;
+  ghost1.position.z = Math.sin(ghost1Angle) * 4;
+  ghost1.position.y =
+    Math.sin(elapsedTime) *
+      Math.sin(elapsedTime * 2.34) *
+      Math.sin(elapsedTime * 3.45) +
+    0.5;
+
+  const ghost2Angle = -elapsedTime * 0.5;
+  ghost2.position.x = Math.cos(ghost2Angle) * 5;
+  ghost2.position.z = Math.sin(ghost2Angle) * 5;
+  ghost2.position.y =
+    Math.sin(elapsedTime) *
+      Math.sin(elapsedTime * 2.34) *
+      Math.sin(elapsedTime * 3.45) +
+    0.5;
+
+  const ghost3Angle = elapsedTime * 0.38;
+  ghost3.position.x = Math.cos(ghost3Angle) * 6;
+  ghost3.position.z = Math.sin(ghost3Angle) * 6;
+  ghost3.position.y =
+    Math.sin(elapsedTime) *
+      Math.sin(elapsedTime * 2.34) *
+      Math.sin(elapsedTime * 3.45) +
+    0.5;
 
   // Update controls
   controls.update();
