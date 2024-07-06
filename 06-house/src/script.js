@@ -303,20 +303,23 @@ for (let i = 0; i < 30; i++) {
   graves.add(grave);
 }
 
-houseGroup.add(walls, roof, door, bush1, bush2, bush3, bush4);
 scene.add(floor, houseGroup, graves);
 /**
  * Lights
  */
 // Ambient light
-const ambientLight = new THREE.AmbientLight("#ffffff", 0.5);
+const ambientLight = new THREE.AmbientLight("#86cdff", 0.275);
 scene.add(ambientLight);
 
 // Directional light
-const directionalLight = new THREE.DirectionalLight("#ffffff", 1.5);
+const directionalLight = new THREE.DirectionalLight("#86cdff", 1);
 directionalLight.position.set(3, 2, -8);
 scene.add(directionalLight);
 
+const doorLight = new THREE.PointLight("#ff7d46", 5);
+doorLight.position.set(0, 2.2, 2.7);
+
+houseGroup.add(walls, roof, door, bush1, bush2, bush3, bush4, doorLight);
 window.addEventListener("resize", () => {
   // Update sizes
   sizes.width = window.innerWidth;
