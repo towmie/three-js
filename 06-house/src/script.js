@@ -23,6 +23,7 @@ const canvas = document.querySelector("canvas.webgl");
 
 // Scene
 const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2("#02343f", 0.1);
 
 /**
  * Sizes
