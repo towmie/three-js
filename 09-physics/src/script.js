@@ -40,6 +40,16 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
+const sound = new Audio("/sounds/hit.mp3");
+
+const playHitSound = (collision) => {
+  if (collision.contact.getImpactVelocityAlongNormal() > 1.5) {
+    sound.volume = Math.random();
+    sound.currentTime = 0;
+    sound.play();
+  }
+};
+
 /**
  * Textures
  */
@@ -197,7 +207,7 @@ const createBoxes = (size, position) => {
     shape,
     material: plasticMaterial,
   });
-
+  body.addEventListener("collide", playHitSound);
   body.position.copy(position);
   world.addBody(body);
 
@@ -223,7 +233,7 @@ const createSphere = (radius, position) => {
     shape,
     material: plasticMaterial,
   });
-
+  body.addEventListener("collide", playHitSound);
   body.position.copy(position);
   world.addBody(body);
 
