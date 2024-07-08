@@ -58,6 +58,8 @@ const environmentMapTexture = cubeTextureLoader.load([
 // Physics
 const world = new CANNON.World();
 world.gravity.set(0, -9.82, 0);
+world.broadphase = new CANNON.SAPBroadphase(world);
+world.allowSleep = true;
 
 // Physics material
 const physicsMaterial = new CANNON.Material("concrete");
