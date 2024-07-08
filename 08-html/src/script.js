@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import GUI from "lil-gui";
+import gsap from "gsap";
 
 /**
  * Debug
@@ -55,6 +56,32 @@ mesh2.position.y = -objectsDistance * 1;
 mesh2.position.x = -2;
 mesh3.position.y = -objectsDistance * 2;
 mesh3.position.x = 2;
+const sectionMeshes = [mesh1, mesh2, mesh3];
+
+const particlesNumber = 200;
+const positions = new Float32Array(particlesNumber * 3);
+positions.forEach((_, index) => {
+  positions[index * 3] = (Math.random() - 0.5) * 10;
+  positions[index * 3 + 1] =
+    objectsDistance * 0.4 -
+    Math.random() * objectsDistance * sectionMeshes.length;
+  positions[index * 3 + 2] = (Math.random() - 0.5) * 10;
+});
+
+const particlesGeometry = new THREE.BufferGeometry();
+particlesGeometry.setAttribute(
+  "position",
+  new THREE.BufferAttribute(positions, 3)
+);
+
+const particlesMaterial = new THREE.PointsMaterial({
+  size: 0.03,
+  color: parameters.materialColor,
+  sizeAttenuation: true,
+});
+
+const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+scene.add(particles);
 
 /**
  * Sizes
@@ -105,8 +132,6 @@ cameraGroup.add(camera);
 
 scene.add(cameraGroup, mesh1, mesh2, mesh3, directionalLight);
 
-const objArray = [mesh1, mesh2, mesh3];
-
 /**
  * Renderer
  */
@@ -119,9 +144,22 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 // scroll
 let scrollY = window.scrollY;
+let currentSection = 0;
 
 window.addEventListener("scroll", () => {
   scrollY = window.scrollY;
+  const newSection = Math.round(scrollY / sizes.height);
+
+  if (newSection != currentSection) {
+    currentSection = newSection;
+    gsap.to(sectionMeshes[currentSection].rotation, {
+      duration: 1.5,
+      ease: "power2.inOut",
+      x: "+=6",
+      y: "+=3",
+      z: "+=1.5",
+    });
+  }
 });
 
 /**
@@ -145,10 +183,10 @@ const tick = () => {
   cameraGroup.position.y +=
     (parallaxY - cameraGroup.position.y) * 5 * deltaTime;
 
-  // //   animate objects
-  objArray.forEach((obj, index) => {
-    obj.rotation.y = elapsedTime * 0.15;
-    obj.rotation.x = elapsedTime * 0.1;
+  //   animate objects
+  sectionMeshes.forEach((obj, index) => {
+    obj.rotation.y += deltaTime * 0.15;
+    obj.rotation.x += deltaTime * 0.1;
   });
 
   // Render
