@@ -26,10 +26,19 @@ const debugObject = {
       }
     );
   },
+  reset: () => {
+    for (const object of objectsToUpdate) {
+      object.body.removeEventListener("collide", playHitSound);
+      world.removeBody(object.body);
+      scene.remove(object.mesh);
+    }
+    objectsToUpdate.splice(0, objectsToUpdate.length);
+  },
 };
 
 gui.add(debugObject, "createSphere");
 gui.add(debugObject, "createBoxes");
+gui.add(debugObject, "reset");
 
 /**
  * Base
@@ -188,8 +197,8 @@ const defaultMaterial = new THREE.MeshStandardMaterial({
   roughness: 0.4,
   envMap: environmentMapTexture,
 });
+const objectsToUpdate = [];
 
-const boxesToCreate = [];
 const createBoxes = (size, position) => {
   const mesh = new THREE.Mesh(boxGeometry, defaultMaterial);
   mesh.scale.set(size.x, size.y, size.z);
@@ -211,12 +220,11 @@ const createBoxes = (size, position) => {
   body.position.copy(position);
   world.addBody(body);
 
-  boxesToCreate.push({ mesh, body });
+  objectsToUpdate.push({ mesh, body });
 };
 
 // utils
 
-const objectsToUpdate = [];
 const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
 
 const createSphere = (radius, position) => {
@@ -259,11 +267,6 @@ const tick = () => {
   world.step(1 / 60, deltaTime, 3);
 
   for (const object of objectsToUpdate) {
-    object.mesh.position.copy(object.body.position);
-    object.mesh.quaternion.copy(object.body.quaternion);
-  }
-
-  for (const object of boxesToCreate) {
     object.mesh.position.copy(object.body.position);
     object.mesh.quaternion.copy(object.body.quaternion);
   }
