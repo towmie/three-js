@@ -16,9 +16,20 @@ const debugObject = {
       z: (Math.random() - 0.5) * 3,
     });
   },
+  createBoxes: () => {
+    createBoxes(
+      { x: Math.random(), y: Math.random(), z: Math.random() },
+      {
+        x: (Math.random() - 0.5) * 3,
+        y: 3,
+        z: (Math.random() - 0.5) * 3,
+      }
+    );
+  },
 };
 
 gui.add(debugObject, "createSphere");
+gui.add(debugObject, "createBoxes");
 
 /**
  * Base
@@ -159,17 +170,45 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// utils
-
-const objectsToUpdate = [];
-const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
-const sphereMaterial = new THREE.MeshStandardMaterial({
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const defaultMaterial = new THREE.MeshStandardMaterial({
   metalness: 0.3,
   roughness: 0.4,
   envMap: environmentMapTexture,
 });
+
+const boxesToCreate = [];
+const createBoxes = (size, position) => {
+  const mesh = new THREE.Mesh(boxGeometry, defaultMaterial);
+  mesh.scale.set(size.x, size.y, size.z);
+
+  mesh.castShadow = true;
+  mesh.position.copy(position);
+  scene.add(mesh);
+
+  const shape = new CANNON.Box(
+    new CANNON.Vec3(size.x / 2, size.y / 2, size.z / 2)
+  );
+  const body = new CANNON.Body({
+    mass: 1,
+    position: new CANNON.Vec3().copy(position),
+    shape,
+    material: plasticMaterial,
+  });
+
+  body.position.copy(position);
+  world.addBody(body);
+
+  boxesToCreate.push({ mesh, body });
+};
+
+// utils
+
+const objectsToUpdate = [];
+const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
+
 const createSphere = (radius, position) => {
-  const mesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  const mesh = new THREE.Mesh(sphereGeometry, defaultMaterial);
   mesh.scale.set(radius, radius, radius);
   mesh.castShadow = true;
   mesh.position.copy(position);
@@ -208,6 +247,11 @@ const tick = () => {
   world.step(1 / 60, deltaTime, 3);
 
   for (const object of objectsToUpdate) {
+    object.mesh.position.copy(object.body.position);
+    object.mesh.quaternion.copy(object.body.quaternion);
+  }
+
+  for (const object of boxesToCreate) {
     object.mesh.position.copy(object.body.position);
     object.mesh.quaternion.copy(object.body.quaternion);
   }
