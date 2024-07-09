@@ -35,7 +35,8 @@ const scene = new THREE.Scene();
  */
 
 // const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-// const pointLight = new THREE.PointLight(0xffffff, 30);
+// const pointLight = new THREE.PointLight(0x00ffff, 30);
+rgba(255, 0, 0);
 
 // pointLight.position.x = 2;
 // pointLight.position.y = 3;
