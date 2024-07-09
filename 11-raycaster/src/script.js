@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 /**
  * Base
@@ -14,6 +15,17 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
+let model = null;
+
+const loader = new GLTFLoader();
+loader.load("/models/Duck/glTF/Duck.gltf", (gltf) => {
+  model = gltf.scene;
+  scene.add(gltf.scene);
+});
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(directionalLight, ambientLight);
 /**
  * Objects
  */
@@ -121,6 +133,10 @@ const tick = () => {
   object2.position.y = Math.sin(elapsedTime * 0.8) * 1.5;
   object3.position.y = Math.sin(elapsedTime * 1.4) * 1.5;
 
+  if (model) {
+    const modelIntersects = raycaster.intersectObject(model, true);
+    console.log(modelIntersects);
+  }
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(objectsArr);
 
