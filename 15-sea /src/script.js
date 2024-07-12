@@ -25,7 +25,7 @@ const debugObject = {
  * Water
  */
 // Geometry
-const waterGeometry = new THREE.PlaneGeometry(2, 2, 128, 128);
+const waterGeometry = new THREE.PlaneGeometry(2, 2, 512, 512);
 
 // Material
 const waterMaterial = new THREE.ShaderMaterial({
@@ -40,6 +40,10 @@ const waterMaterial = new THREE.ShaderMaterial({
     uTopColor: { value: new THREE.Color(debugObject.topColor) },
     uColorOffset: { value: 0.08 },
     uColorMultiplier: { value: 5 },
+    uSmallWavesElevation: { value: 0.15 },
+    uSmallWavesFrequency: { value: 3 },
+    uSmallWavesSpeed: { value: 0.2 },
+    uSmallWavesIterations: { value: 4 },
   },
   side: THREE.DoubleSide,
 });
@@ -87,7 +91,7 @@ gui
   .add(waterMaterial.uniforms.uColorOffset, "value")
   .min(0)
   .max(1)
-  .step(0.01)
+  .step(1)
   .name("uColorOffset");
 
 gui
@@ -96,6 +100,31 @@ gui
   .max(10)
   .step(0.01)
   .name("uColorMultiplier");
+gui
+  .add(waterMaterial.uniforms.uSmallWavesElevation, "value")
+  .min(0)
+  .max(1)
+  .step(0.01)
+  .name("uSmallWavesElevation");
+gui
+  .add(waterMaterial.uniforms.uSmallWavesFrequency, "value")
+  .min(0)
+  .max(30)
+  .step(0.01)
+  .name("uSmallWavesFrequency");
+gui
+  .add(waterMaterial.uniforms.uSmallWavesSpeed, "value")
+  .min(0)
+  .max(4)
+  .step(0.01)
+  .name("uSmallWavesSpeed");
+
+gui
+  .add(waterMaterial.uniforms.uSmallWavesIterations, "value")
+  .min(0)
+  .max(5)
+  .step(1)
+  .name("uSmallWavesIterations");
 
 // Mesh
 const water = new THREE.Mesh(waterGeometry, waterMaterial);
