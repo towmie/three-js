@@ -5,6 +5,7 @@ import BlockSpinner from "./BlockSpinner";
 import BlockStart from "./BlockStart";
 import * as THREE from "three";
 import { useMemo } from "react";
+import Walls from "./Walls";
 
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 const floorOneMaterial = new THREE.MeshStandardMaterial({ color: "limegreen" });
@@ -12,7 +13,6 @@ const floorTwoMaterial = new THREE.MeshStandardMaterial({
   color: "greenyellow",
 });
 const obstacleMaterial = new THREE.MeshStandardMaterial({ color: "orangered" });
-const wallMaterial = new THREE.MeshStandardMaterial({ color: "slategrey" });
 
 function Level({
   count = 5,
@@ -72,6 +72,7 @@ function Level({
         geometry={boxGeometry}
         material={floorOneMaterial}
       />
+      <Walls length={count + 2} />
     </>
   );
 }
