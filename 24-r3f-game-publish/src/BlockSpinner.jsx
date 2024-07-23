@@ -2,13 +2,12 @@ import { useFrame } from "@react-three/fiber";
 import { RigidBody } from "@react-three/rapier";
 import { useRef, useState } from "react";
 import * as THREE from "three";
+const floorTwoMaterial = new THREE.MeshStandardMaterial({
+  color: "greenyellow",
+});
+const obstacleMaterial = new THREE.MeshStandardMaterial({ color: "orangered" });
 
-function BlockSpinner({
-  position = [0, 0, 0],
-  geometry,
-  material,
-  obstMaterial,
-}) {
+function BlockSpinner({ position = [0, 0, 0], geometry }) {
   const obstRef = useRef();
   const [speed] = useState(
     () => (Math.random() + 0.3) * (Math.random() > 0.5 ? 1 : -1)
@@ -26,7 +25,7 @@ function BlockSpinner({
       <group position={position}>
         <mesh
           geometry={geometry}
-          material={material}
+          material={floorTwoMaterial}
           scale={[4, 0.2, 4]}
           receiveShadow
           position={[0, -0.1, 0]}
@@ -40,7 +39,7 @@ function BlockSpinner({
         >
           <mesh
             geometry={geometry}
-            material={obstMaterial}
+            material={obstacleMaterial}
             scale={[3.5, 0.3, 0.3]}
             castShadow
             receiveShadow

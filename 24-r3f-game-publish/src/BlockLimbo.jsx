@@ -1,13 +1,12 @@
 import { useFrame } from "@react-three/fiber";
 import { RigidBody } from "@react-three/rapier";
 import { useRef, useState } from "react";
-
-function BlockLimbo({
-  position = [0, 0, 0],
-  geometry,
-  material,
-  obstMaterial,
-}) {
+import * as THREE from "three";
+const floorTwoMaterial = new THREE.MeshStandardMaterial({
+  color: "greenyellow",
+});
+const obstacleMaterial = new THREE.MeshStandardMaterial({ color: "orangered" });
+function BlockLimbo({ position = [0, 0, 0], geometry }) {
   const obstRef = useRef();
   const [timeOffset] = useState(() => Math.random() * Math.PI * 2);
 
@@ -25,7 +24,7 @@ function BlockLimbo({
       <group position={position}>
         <mesh
           geometry={geometry}
-          material={material}
+          material={floorTwoMaterial}
           scale={[4, 0.2, 4]}
           receiveShadow
           position={[0, -0.1, 0]}
@@ -39,7 +38,7 @@ function BlockLimbo({
         >
           <mesh
             geometry={geometry}
-            material={obstMaterial}
+            material={obstacleMaterial}
             scale={[3.5, 0.3, 0.3]}
             castShadow
             receiveShadow

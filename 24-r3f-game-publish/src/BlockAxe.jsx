@@ -1,16 +1,20 @@
 import { useFrame } from "@react-three/fiber";
 import { RigidBody } from "@react-three/rapier";
 import { useRef, useState } from "react";
-
-function BlockAxe({ position = [0, 0, 0], geometry, material, obstMaterial }) {
+import * as THREE from "three";
+const obstacleMaterial = new THREE.MeshStandardMaterial({ color: "orangered" });
+const floorTwoMaterial = new THREE.MeshStandardMaterial({
+  color: "greenyellow",
+});
+function BlockAxe({ position = [0, 0, 0], geometry, material }) {
   const obstRef = useRef();
   const [timeOffset] = useState(() => Math.random() * Math.PI * 2);
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
     obstRef.current.setNextKinematicTranslation({
-      x: position[0],
-      y: position[1] + Math.sin(timeOffset + time) + 1.15,
+      x: position[0] + Math.sin(timeOffset + time) * 1.25,
+      y: position[1] + 0.75,
       z: position[2],
     });
   });
@@ -20,22 +24,22 @@ function BlockAxe({ position = [0, 0, 0], geometry, material, obstMaterial }) {
       <group position={position}>
         <mesh
           geometry={geometry}
-          material={material}
+          material={floorTwoMaterial}
           scale={[4, 0.2, 4]}
           receiveShadow
           position={[0, -0.1, 0]}
         />
         <RigidBody
           type="kinematicPosition"
-          position={[0, 0.3, 0]}
+          position={[0, 1, 0]}
           restitution={0.2}
           friction={0}
           ref={obstRef}
         >
           <mesh
             geometry={geometry}
-            material={obstMaterial}
-            scale={[3.5, 0.3, 0.3]}
+            material={obstacleMaterial}
+            scale={[1.5, 1.5, 0.3]}
             castShadow
             receiveShadow
           />
