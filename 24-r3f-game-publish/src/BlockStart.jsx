@@ -1,6 +1,8 @@
+import { RigidBody } from "@react-three/rapier";
+
 function BlockStart({ position = [0, 0, 0], geometry, material }) {
   return (
-    <>
+    <RigidBody type="fixed">
       <group position={position}>
         <mesh
           geometry={geometry}
@@ -10,7 +12,7 @@ function BlockStart({ position = [0, 0, 0], geometry, material }) {
           position={[0, -0.1, 0]}
         />
       </group>
-    </>
+    </RigidBody>
   );
 }
 

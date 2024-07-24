@@ -30,30 +30,6 @@ function Level({
 
   return (
     <>
-      {/* <BlockEnd
-        position={[0, 0, -4]}
-        geometry={boxGeometry}
-        material={floorOneMaterial}
-      />
-      <BlockAxe
-        position={[0, 0, 0]}
-        geometry={boxGeometry}
-        material={floorTwoMaterial}
-        obstMaterial={obstacleMaterial}
-      />
-      <BlockSpinner
-        position={[0, 0, 4]}
-        geometry={boxGeometry}
-        material={floorTwoMaterial}
-        obstMaterial={obstacleMaterial}
-      />
-      <BlockLimbo
-        position={[0, 0, 8]}
-        geometry={boxGeometry}
-        material={floorTwoMaterial}
-        obstMaterial={obstacleMaterial}
-      /> */}
-
       <BlockStart
         position={[0, 0, 0]}
         geometry={boxGeometry}

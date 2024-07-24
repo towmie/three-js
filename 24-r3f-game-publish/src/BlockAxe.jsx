@@ -22,13 +22,15 @@ function BlockAxe({ position = [0, 0, 0], geometry, material }) {
   return (
     <>
       <group position={position}>
-        <mesh
-          geometry={geometry}
-          material={floorTwoMaterial}
-          scale={[4, 0.2, 4]}
-          receiveShadow
-          position={[0, -0.1, 0]}
-        />
+        <RigidBody type="fixed">
+          <mesh
+            geometry={geometry}
+            material={floorTwoMaterial}
+            scale={[4, 0.2, 4]}
+            receiveShadow
+            position={[0, -0.1, 0]}
+          />
+        </RigidBody>
         <RigidBody
           type="kinematicPosition"
           position={[0, 1, 0]}
