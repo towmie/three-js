@@ -3,6 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { RigidBody, useRapier } from "@react-three/rapier";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import useGame from "./useGame";
 
 function Player() {
   const ballRef = useRef();
@@ -11,7 +12,10 @@ function Player() {
     () => new THREE.Vector3(10, 10, 10)
   );
   const [smoothedCameraTarget] = useState(() => new THREE.Vector3());
-
+  const start = useGame((state) => state.start);
+  const end = useGame((state) => state.end);
+  const restart = useGame((state) => state.restart);
+  const blocksCount = useGame((state) => state.blocksCount);
   const { rapier, world } = useRapier();
 
   useFrame((state, delta) => {
@@ -59,6 +63,10 @@ function Player() {
 
     state.camera.position.copy(cameraPosition);
     state.camera.lookAt(cameraTarget);
+
+    // phases
+    if (ballPosition.z < -(blocksCount * 4 + 2)) end();
+    if (ballPosition.y < -4) restart();
   });
 
   function jump() {
@@ -72,16 +80,32 @@ function Player() {
       ballRef.current.applyImpulse({ x: 0, y: 0.5, z: 0 });
     }
   }
+  function reset() {
+    ballRef.current.setTranslation({ x: 0, y: 1, z: 0 });
+    ballRef.current.setLinvel({ x: 0, y: 0, z: 0 });
+    ballRef.current.setAngvel({ x: 0, y: 0, z: 0 });
+  }
 
   useEffect(() => {
+    const unsobsribeReset = useGame.subscribe(
+      (state) => state.phase,
+      (value) => {
+        if (value === "ready") reset();
+      }
+    );
     const unsubscribe = subscribeKeys(
       (state) => state.jump,
       (value) => {
         if (value) jump();
       }
     );
+    const unsubscribeAny = subscribeKeys(() => {
+      start();
+    });
     return () => {
       unsubscribe();
+      unsubscribeAny();
+      unsobsribeReset();
     };
   }, []);
 

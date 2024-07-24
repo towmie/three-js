@@ -17,6 +17,7 @@ const obstacleMaterial = new THREE.MeshStandardMaterial({ color: "orangered" });
 function Level({
   count = 5,
   blockTypes = [BlockSpinner, BlockLimbo, BlockAxe],
+  seed = 0,
 }) {
   const blocks = useMemo(() => {
     const newBlocks = [];
@@ -26,7 +27,7 @@ function Level({
     }
 
     return newBlocks;
-  }, [count, blockTypes]);
+  }, [count, blockTypes, seed]);
 
   return (
     <>
