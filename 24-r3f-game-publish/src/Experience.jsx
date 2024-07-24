@@ -10,12 +10,10 @@ import Player from "./Player.jsx";
 export default function Experience() {
   return (
     <>
-      <OrbitControls makeDefault />
-
       <Physics debug>
         <Lights />
         <Level count={7} blockTypes={[BlockSpinner, BlockLimbo, BlockAxe]} />
-        <Player/>
+        <Player />
       </Physics>
     </>
   );
