@@ -7,7 +7,7 @@ function Walls({ length }) {
     <>
       <RigidBody type="fixed" restitution={0.2} friction={0}>
         <mesh
-          scale={[0.3, 1, length * 4]}
+          scale={[0.3, 1.75, length * 4]}
           position={[2.15, 0.5, -(length * 2) + 2]}
           material={wallMaterial}
           castShadow
@@ -15,7 +15,7 @@ function Walls({ length }) {
           <boxGeometry />
         </mesh>
         <mesh
-          scale={[0.3, 1, length * 4]}
+          scale={[0.3, 1.75, length * 4]}
           position={[-2.15, 0.5, -(length * 2) + 2]}
           material={wallMaterial}
           receiveShadow
