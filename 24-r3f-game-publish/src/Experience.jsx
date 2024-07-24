@@ -13,6 +13,7 @@ export default function Experience() {
   const blockSeed = useGame((state) => state.blocksSeed);
   return (
     <>
+      <color args={["#bdedfc"]} attach="background" />
       <Physics>
         <Lights />
         <Level
