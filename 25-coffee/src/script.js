@@ -82,6 +82,7 @@ const smokeMaterial = new THREE.ShaderMaterial({
   },
   side: THREE.DoubleSide,
   transparent: true,
+  depthWrite: false,
 });
 
 const smokeMesh = new THREE.Mesh(smokeGeometry, smokeMaterial);
