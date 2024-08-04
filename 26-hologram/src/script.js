@@ -77,6 +77,13 @@ gui.addColor(rendererParameters, "clearColor").onChange(() => {
   renderer.setClearColor(rendererParameters.clearColor);
 });
 
+const materialParams = {
+  color: "#70c1ff",
+};
+
+gui.addColor(materialParams, "color").onChange(() => {
+  material.uniforms.uColor.value.set(materialParams.color);
+});
 /**
  * Material
  */
@@ -85,10 +92,12 @@ const material = new THREE.ShaderMaterial({
   fragmentShader: fragment,
   uniforms: {
     uTime: new THREE.Uniform(0),
+    uColor: new THREE.Uniform(new THREE.Color(materialParams.color)),
   },
   transparent: true,
   side: THREE.DoubleSide,
   depthWrite: false,
+  blending: THREE.AdditiveBlending,
 });
 
 /**
