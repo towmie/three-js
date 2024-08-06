@@ -18,6 +18,11 @@ void main(){
     explosion = 1.0 - (1.0 - pow(explosion, 3.0));
     newPosition *= explosion;
 
+    float falling = remap(uProgress, 0.1, 1.0, 0.0, 1.0);
+    falling = clamp(falling, 0.0, 1.0); 
+    falling = 1.0 - (1.0 - pow(falling, 3.0));
+    newPosition.y -= falling * 0.2;
+
     vec4 modelPosition = modelMatrix * vec4(newPosition, 1.0);
     vec4 viewPosition = viewMatrix * modelPosition;
     gl_Position = projectionMatrix * viewPosition;
