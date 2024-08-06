@@ -21,13 +21,17 @@ void main(){
     float falling = remap(uProgress, 0.1, 1.0, 0.0, 1.0);
     falling = clamp(falling, 0.0, 1.0); 
     falling = 1.0 - (1.0 - pow(falling, 3.0));
-    newPosition.y -= falling * 0.2;
+    newPosition.y -= falling;
+
+    float sizeOpening = remap(uProgress, 0.0, 0.125, 0.0, 1.0);
+    float sizeClosing = remap(uProgress,0.125, 1.0, 1.0, 0.0);
+    float size = min(sizeOpening, sizeClosing);
 
     vec4 modelPosition = modelMatrix * vec4(newPosition, 1.0);
     vec4 viewPosition = viewMatrix * modelPosition;
     gl_Position = projectionMatrix * viewPosition;
 
 
-    gl_PointSize = uSize * uResolution.y * aSize;
+    gl_PointSize = uSize * uResolution.y * aSize * size;
     gl_PointSize *= 1.0 / - viewPosition.z;
 }
