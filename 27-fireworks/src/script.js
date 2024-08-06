@@ -89,7 +89,7 @@ renderer.setPixelRatio(params.pixelRatio);
 /**
  * Test
  */
-const texture = [
+const textures = [
   textureLoader.load("./particles/1.png"),
   textureLoader.load("./particles/2.png"),
   textureLoader.load("./particles/3.png"),
@@ -103,6 +103,7 @@ const texture = [
 const createFireworks = (count, position, size, texture, radius, color) => {
   const positionArr = new Float32Array(count * 3);
   const sizesArr = new Float32Array(count);
+  const timeMultiplierArr = new Float32Array(count);
 
   for (let i = 0; i < count; i++) {
     const i3 = i * 3;
@@ -121,6 +122,7 @@ const createFireworks = (count, position, size, texture, radius, color) => {
     positionArr[i3 + 2] = position.z;
 
     sizesArr[i] = Math.random();
+    timeMultiplierArr[i] = 1 + Math.random();
   }
 
   const geometry = new THREE.BufferGeometry();
@@ -129,6 +131,10 @@ const createFireworks = (count, position, size, texture, radius, color) => {
     new THREE.Float32BufferAttribute(positionArr, 3)
   );
   geometry.setAttribute("aSize", new THREE.Float32BufferAttribute(sizesArr, 1));
+  geometry.setAttribute(
+    "aTimeMultiplier",
+    new THREE.Float32BufferAttribute(timeMultiplierArr, 1)
+  );
 
   texture.flipY = false;
   const material = new THREE.ShaderMaterial({
@@ -164,16 +170,22 @@ const createFireworks = (count, position, size, texture, radius, color) => {
   });
 };
 
-window.addEventListener("click", () => {
-  createFireworks(
-    params.count,
-    params.position,
-    params.size,
-    texture[7],
-    params.radius,
-    params.color
+const createRandomFirework = () => {
+  const count = Math.round(400 + Math.random() * 1000);
+  const position = new THREE.Vector3(
+    (Math.random() - 0.5) * 2,
+    Math.random(),
+    (Math.random() - 0.5) * 2
   );
-});
+  const size = 0.1 + Math.random() * 0.1;
+  const texture = textures[Math.floor(Math.random() * textures.length)];
+  const radius = 0.5 + Math.random();
+  const color = new THREE.Color();
+  color.setHSL(Math.random(), 1, 0.7);
+  createFireworks(count, position, size, texture, radius, color);
+};
+
+window.addEventListener("click", createRandomFirework);
 
 /**
  * Animate
