@@ -3,6 +3,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import vertex from "./shaders/vertex.glsl";
+import fragment from "./shaders/fragment.glsl";
 
 /**
  * Base
@@ -17,6 +19,14 @@ const canvas = document.querySelector("canvas.webgl");
 
 // Scene
 const scene = new THREE.Scene();
+
+const debugObject = {
+  clearColor: "#201919",
+};
+
+gui.addColor(debugObject, "clearColor").onChange(() => {
+  renderer.setClearColor(debugObject.clearColor);
+});
 
 /**
  * Loaders
@@ -69,6 +79,39 @@ const sizes = {
   height: window.innerHeight,
 };
 
+// Fireflies
+
+const firefliesGeometry = new THREE.BufferGeometry();
+const firefliesCount = 30;
+const positionArray = new Float32Array(firefliesCount * 3);
+const scaleArray = new Float32Array(firefliesCount);
+
+for (let i = 0; i < firefliesCount; i++) {
+  positionArray[i * 3 + 0] = (Math.random() - 0.5) * 4;
+  positionArray[i * 3 + 1] = Math.random() * 1.5;
+  positionArray[i * 3 + 2] = (Math.random() - 0.5) * 4;
+
+  scaleArray[i] = Math.random();
+}
+
+firefliesGeometry.setAttribute(
+  "position",
+  new THREE.BufferAttribute(positionArray, 3)
+);
+firefliesGeometry.setAttribute(
+  "aScale",
+  new THREE.BufferAttribute(scaleArray, 1)
+);
+
+// const firefliesMaterial = new THREE.ShaderMaterial({
+//   vertexShader: vertex,
+//   fragmentShader: fragment,
+// });
+
+// const fireFlies = new THREE.Points(firefliesGeometry, firefliesMaterial);
+
+scene.add(fireFlies);
+
 window.addEventListener("resize", () => {
   // Update sizes
   sizes.width = window.innerWidth;
@@ -109,6 +152,7 @@ const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   antialias: true,
 });
+renderer.setClearColor(debugObject.clearColor);
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 

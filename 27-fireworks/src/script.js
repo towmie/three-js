@@ -29,7 +29,7 @@ const sizes = {
 };
 
 const params = {
-  count: 100,
+  count: 400,
   position: new THREE.Vector3(),
   size: 0.5,
   pixelRatio: Math.min(window.devicePixelRatio, 2),
