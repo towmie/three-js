@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import GUI from "lil-gui";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import halftoneVertexShader from "./shaders/halftone/vertex.glsl";
 import halftoneFragmentShader from "./shaders/halftone/fragment.glsl";
@@ -9,7 +8,6 @@ import halftoneFragmentShader from "./shaders/halftone/fragment.glsl";
  * Base
  */
 // Debug
-const gui = new GUI();
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -82,15 +80,12 @@ renderer.setClearColor(rendererParameters.clearColor);
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(sizes.pixelRatio);
 
-gui.addColor(rendererParameters, "clearColor").onChange(() => {
-  renderer.setClearColor(rendererParameters.clearColor);
-});
-
 /**
  * Material
  */
 const materialParameters = {};
 materialParameters.color = "#ff794d";
+materialParameters.shadowColor = "#8e19b8";
 
 const material = new THREE.ShaderMaterial({
   vertexShader: halftoneVertexShader,
@@ -106,11 +101,11 @@ const material = new THREE.ShaderMaterial({
         sizes.height * sizes.pixelRatio
       )
     ),
+    uShadowRepetition: new THREE.Uniform(100),
+    uShadowColor: new THREE.Uniform(
+      new THREE.Color(materialParameters.shadowColor)
+    ),
   },
-});
-
-gui.addColor(materialParameters, "color").onChange(() => {
-  material.uniforms.uColor.value.set(materialParameters.color);
 });
 
 /**
