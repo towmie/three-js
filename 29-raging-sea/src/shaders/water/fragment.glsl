@@ -9,6 +9,7 @@ varying vec3 vPosition;
 
 #include ../includes/directionalLight.glsl
 
+
 void main()
 {
     vec3 normal = normalize(vNormal);

@@ -173,6 +173,9 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+const axisHelper = new THREE.AxesHelper();
+axisHelper.position.y += 0.25;
+scene.add(axisHelper);
 /**
  * Animate
  */

@@ -63,17 +63,15 @@ void main()
     vec3 color = uColor;
     vec3 light = vec3(0.0);
 
-    // light += ambientLight(vec3(1.0), 0.1);
-    // color *= light;
-    // light += directionalLight(vec3(
-    //     0.1, 0.1, 1.0),
-    //     1.0,
-    //     normal,
-    //     vec3(0.0, 0.0, 3.0),
-    //     viewDirection,
-    //     1.0
-    //     );
-    // color *= light;
+    light += ambientLight(vec3(1.0), 0.1);
+    light += directionalLight(vec3(
+        0.1, 0.1, 1.0),
+        1.0,
+        normal,
+        vec3(0.0, 0.0, 3.0),
+        viewDirection,
+        1.0
+        );
 
     light += pointlLight(vec3(
         1.0, 0.1, 0.1),
