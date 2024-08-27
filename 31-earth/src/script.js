@@ -3,6 +3,8 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import GUI from "lil-gui";
 import earthVertexShader from "./shaders/earth/vertex.glsl";
 import earthFragmentShader from "./shaders/earth/fragment.glsl";
+import atmosphereVertexShader from "./shaders/atmosphere/vertex.glsl";
+import atmosphereFragmentShader from "./shaders/atmosphere/fragment.glsl";
 
 /**
  * Base
@@ -33,6 +35,30 @@ earthSpecularTexture.anisotropy = 8;
  * Earth
  */
 // Mesh
+
+const earthParams = {
+  atmoshpereColor: "#00aaff",
+  atmosphereTwilightColor: "#ff6600",
+};
+
+gui.addColor(earthParams, "atmoshpereColor").onChange(() => {
+  earthMaterial.uniforms.uAtmosphereColor.value.set(
+    earthParams.atmoshpereColor
+  );
+  atmosphereMaterial.uniforms.uAtmosphereColor.value.set(
+    earthParams.atmoshpereColor
+  );
+});
+
+gui.addColor(earthParams, "atmosphereTwilightColor").onChange(() => {
+  earthMaterial.uniforms.uAtmosphereTwilightColor.value.set(
+    earthParams.atmosphereTwilightColor
+  );
+  atmosphereMaterial.uniforms.uAtmosphereTwilightColor.value.set(
+    earthParams.atmosphereTwilightColor
+  );
+});
+
 const earthGeometry = new THREE.SphereGeometry(2, 64, 64);
 const earthMaterial = new THREE.ShaderMaterial({
   vertexShader: earthVertexShader,
@@ -42,10 +68,33 @@ const earthMaterial = new THREE.ShaderMaterial({
     uNightTexture: { value: earthNightTexture },
     uSpecularTexture: { value: earthSpecularTexture },
     uSunDirection: { value: new THREE.Vector3(0, 0, 1) },
+    uAtmosphereColor: { value: new THREE.Color(earthParams.atmoshpereColor) },
+    uAtmosphereTwilightColor: {
+      value: new THREE.Color(earthParams.atmosphereTwilightColor),
+    },
   },
 });
 const earth = new THREE.Mesh(earthGeometry, earthMaterial);
 scene.add(earth);
+
+const atmosphereMaterial = new THREE.ShaderMaterial({
+  side: THREE.BackSide,
+  transparent: true,
+
+  vertexShader: atmosphereVertexShader,
+  fragmentShader: atmosphereFragmentShader,
+  uniforms: {
+    uSunDirection: { value: new THREE.Vector3(0, 0, 1) },
+    uAtmosphereColor: { value: new THREE.Color(earthParams.atmoshpereColor) },
+    uAtmosphereTwilightColor: {
+      value: new THREE.Color(earthParams.atmosphereTwilightColor),
+    },
+  },
+});
+
+const atmosphere = new THREE.Mesh(earthGeometry, atmosphereMaterial);
+atmosphere.scale.setScalar(1.04);
+scene.add(atmosphere);
 
 // Sun
 const sunSpherical = new THREE.Spherical(1, Math.PI / 2, 0.5);
@@ -62,6 +111,7 @@ const updareSun = () => {
   debugSun.position.copy(sunDirection).multiplyScalar(5);
 
   earthMaterial.uniforms.uSunDirection.value.copy(sunDirection);
+  atmosphereMaterial.uniforms.uSunDirection.value.copy(sunDirection);
 };
 
 updareSun();

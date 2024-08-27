@@ -5,6 +5,8 @@ uniform sampler2D uDayTexture;
 uniform sampler2D uNightTexture;
 uniform sampler2D uSpecularTexture;
 uniform vec3 uSunDirection;
+uniform vec3 uAtmosphereColor;
+uniform vec3 uAtmosphereTwilightColor;
 
 void main()
 {
@@ -29,6 +31,28 @@ void main()
     float cloudMix = smoothstep(0.15, 1.0, specularCloudColor.g);
     cloudMix *= dayMix;
     color = mix(color, vec3(1.0), cloudMix);
+
+    float fresnel = dot(viewDirection, normal) + 1.0;
+    fresnel = pow(fresnel, 2.0);
+
+    // Atmpsphere
+    float atmosphereMix = smoothstep(-0.5, 1.0, sunOrientation);
+    vec3 atmosphereColor = mix(uAtmosphereTwilightColor, uAtmosphereColor, atmosphereMix);
+    color = mix(color, atmosphereColor, fresnel * atmosphereMix);
+
+    // Specular
+    vec3 reflectionDirection = reflect(- uSunDirection, normal);
+    float specularMix = smoothstep(0.0, 1.0, reflectionDirection.y);
+    float specular = - dot(reflectionDirection, viewDirection);
+    specular = max(specular, 0.0);
+    specular = pow(specular, 10.0);
+    specular *= specularCloudColor.r;
+
+    vec3 specularColor = mix(vec3(1.0), atmosphereColor, fresnel);
+    color += specular * specularColor;
+
+
+  
 
     // Final color
     gl_FragColor = vec4(color, 1.0);
