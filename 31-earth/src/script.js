@@ -37,6 +37,7 @@ const earthMaterial = new THREE.ShaderMaterial({
     uDayTexture: { value: earthDayTexture },
     uNightTexture: { value: earthNightTexture },
     uSpecularTexture: { value: earthSpecularTexture },
+    uSunDirection: { value: new THREE.Vector3(0, 0, 1) },
   },
 });
 const earth = new THREE.Mesh(earthGeometry, earthMaterial);
@@ -55,8 +56,20 @@ const updareSun = () => {
   sunDirection.setFromSpherical(sunSpherical);
 
   debugSun.position.copy(sunDirection).multiplyScalar(5);
+
+  earthMaterial.uniforms.uSunDirection.value.copy(sunDirection);
 };
+
 updareSun();
+
+gui.add(sunSpherical, "phi").min(0).max(Math.PI).step(0.01).onChange(updareSun);
+gui
+  .add(sunSpherical, "theta")
+  .min(0)
+  .max(Math.PI * 2)
+  .step(0.01)
+  .onChange(updareSun);
+
 const sun = new THREE.Mesh(
   new THREE.SphereGeometry(0.3, 32, 32),
   new THREE.MeshBasicMaterial({ color: "yellow" })
