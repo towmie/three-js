@@ -23,8 +23,12 @@ void main()
     color = mix(nightColor, dayColor, dayMix);
 
 
+    // specular clouds color
+    vec2 specularCloudColor= texture2D(uSpecularTexture, vUv).rg;
 
-
+    float cloudMix = smoothstep(0.15, 1.0, specularCloudColor.g);
+    cloudMix *= dayMix;
+    color = mix(color, vec3(1.0), cloudMix);
 
     // Final color
     gl_FragColor = vec4(color, 1.0);

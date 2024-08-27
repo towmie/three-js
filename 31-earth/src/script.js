@@ -21,9 +21,13 @@ const textureLoader = new THREE.TextureLoader();
 
 const earthDayTexture = textureLoader.load("./earth/day.jpg");
 earthDayTexture.colorSpace = THREE.SRGBColorSpace;
+earthDayTexture.anisotropy = 8;
 const earthNightTexture = textureLoader.load("./earth/night.jpg");
 earthNightTexture.colorSpace = THREE.SRGBColorSpace;
-const earthSpecularTexture = textureLoader.load("./earth/specular.jpg");
+earthNightTexture.anisotropy = 8;
+
+const earthSpecularTexture = textureLoader.load("./earth/specularClouds.jpg");
+earthSpecularTexture.anisotropy = 8;
 
 /**
  * Earth
