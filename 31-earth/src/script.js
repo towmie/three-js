@@ -42,6 +42,27 @@ const earthMaterial = new THREE.ShaderMaterial({
 const earth = new THREE.Mesh(earthGeometry, earthMaterial);
 scene.add(earth);
 
+// Sun
+const sunSpherical = new THREE.Spherical(1, Math.PI / 2, 0.5);
+const sunDirection = new THREE.Vector3();
+const debugSun = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(0.1, 2),
+  new THREE.MeshBasicMaterial()
+);
+scene.add(debugSun);
+
+const updareSun = () => {
+  sunDirection.setFromSpherical(sunSpherical);
+
+  debugSun.position.copy(sunDirection).multiplyScalar(5);
+};
+updareSun();
+const sun = new THREE.Mesh(
+  new THREE.SphereGeometry(0.3, 32, 32),
+  new THREE.MeshBasicMaterial({ color: "yellow" })
+);
+sun.position.setFromSpherical(sunSpherical);
+scene.add(sun);
 /**
  * Sizes
  */
