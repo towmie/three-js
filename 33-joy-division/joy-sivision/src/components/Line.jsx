@@ -11,11 +11,12 @@ function Line({ index }) {
   const uniforms = useMemo(
     () => ({
       uOffset: { value: index * 11 },
+      uTime: { value: 0 },
     }),
     [index]
   );
   return (
-    <>
+    <group>
       <mesh position-z={-index * 0.095} geometry={lineGeometry}>
         <shaderMaterial
           vertexShader={vertexShader}
@@ -36,7 +37,7 @@ function Line({ index }) {
         />
         {/* <meshBasicMaterial side={THREE.DoubleSide} color={"black"} /> */}
       </mesh>
-    </>
+    </group>
   );
 }
 
