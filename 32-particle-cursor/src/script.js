@@ -80,8 +80,8 @@ displaysment.canvas.width = 128;
 displaysment.canvas.height = 128;
 document.body.append(displaysment.canvas);
 displaysment.canvas.style.position = "fixed";
-displaysment.canvas.style.width = "512px";
-displaysment.canvas.style.height = "512px";
+displaysment.canvas.style.width = "256px";
+displaysment.canvas.style.height = "256px";
 displaysment.canvas.style.top = 0;
 displaysment.canvas.style.left = 0;
 displaysment.canvas.style.zIndex = 10;
@@ -98,13 +98,24 @@ displaysment.context.fillRect(
 displaysment.glowImage = new Image();
 displaysment.glowImage.src = "./glow.png";
 
-displaysment.context.drawImage(
-  displaysment.glowImage,
-  0,
-  0,
-  displaysment.canvas.width,
-  displaysment.canvas.height
+displaysment.interactivePlane = new THREE.Mesh(
+  new THREE.PlaneGeometry(10, 10),
+  new THREE.MeshBasicMaterial({
+    color: "red",
+  })
 );
+scene.add(displaysment.interactivePlane);
+
+// raycaster
+displaysment.raycaster = new THREE.Raycaster();
+// Coordinates
+displaysment.screenCoursor = new THREE.Vector2(9999, 9999);
+displaysment.canvasCoursor = new THREE.Vector2(9999, 9999);
+
+window.addEventListener("pointermove", (event) => {
+  displaysment.screenCoursor.x = (event.clientX / sizes.width) * 2 - 1;
+  displaysment.screenCoursor.y = -(event.clientY / sizes.height) * 2 + 1;
+});
 
 /**
  * Particles
@@ -133,6 +144,38 @@ scene.add(particles);
 const tick = () => {
   // Update controls
   controls.update();
+
+  displaysment.raycaster.setFromCamera(displaysment.screenCoursor, camera);
+  const intersections = displaysment.raycaster.intersectObject(
+    displaysment.interactivePlane
+  );
+  const glowSize = displaysment.canvas.width * 0.25;
+
+  if (intersections.length > 0) {
+    const uv = intersections[0].uv;
+
+    displaysment.canvasCoursor.x = uv.x * displaysment.canvas.width;
+    displaysment.canvasCoursor.y = (1 - uv.y) * displaysment.canvas.height;
+  }
+  displaysment.context.globalCompositeOperation = "source-over";
+  displaysment.context.globalAlpha = 0.05;
+  displaysment.context.fillRect(
+    0,
+    0,
+    displaysment.canvas.width,
+    displaysment.canvas.height
+  );
+
+  displaysment.context.globalCompositeOperation = "lighten";
+  displaysment.context.globalAlpha = 1;
+
+  displaysment.context.drawImage(
+    displaysment.glowImage,
+    displaysment.canvasCoursor.x - glowSize / 2,
+    displaysment.canvasCoursor.y - glowSize / 2,
+    glowSize,
+    glowSize
+  );
 
   // Render
   renderer.render(scene, camera);
