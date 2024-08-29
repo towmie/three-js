@@ -12,6 +12,7 @@ function Line({ index }) {
     () => ({
       uOffset: { value: index * 11 },
       uTime: { value: 0 },
+      uStrength: { value: 0 },
     }),
     [index]
   );
