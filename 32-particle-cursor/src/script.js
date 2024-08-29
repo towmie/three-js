@@ -102,6 +102,7 @@ displacement.interactivePlane = new THREE.Mesh(
   new THREE.PlaneGeometry(10, 10),
   new THREE.MeshBasicMaterial({
     color: "red",
+    side: THREE.DoubleSide,
   })
 );
 scene.add(displacement.interactivePlane);
@@ -124,6 +125,8 @@ displacement.texture = new THREE.CanvasTexture(displacement.canvas);
  * Particles
  */
 const particlesGeometry = new THREE.PlaneGeometry(10, 10, 128, 128);
+particlesGeometry.setIndex(null);
+particlesGeometry.deleteAttribute("normal");
 
 const intesityArray = new Float32Array(
   particlesGeometry.attributes.position.count

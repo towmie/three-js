@@ -11,7 +11,7 @@ void main()
 
     vec3 newPosition = position;
     float displacementIntensity = texture2D(uDisplacementTexture, uv).r;
-
+    displacementIntensity = smoothstep(0.1, 0.3, displacementIntensity);
     // direction
     vec3 displacement = vec3(cos(aAngle) * 0.2, sin(aAngle) * 0.2, 1.0);
 
