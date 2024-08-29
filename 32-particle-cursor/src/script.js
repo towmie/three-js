@@ -73,10 +73,43 @@ renderer.setClearColor("#181818");
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(sizes.pixelRatio);
 
+const displaysment = {};
+
+displaysment.canvas = document.createElement("canvas");
+displaysment.canvas.width = 128;
+displaysment.canvas.height = 128;
+document.body.append(displaysment.canvas);
+displaysment.canvas.style.position = "fixed";
+displaysment.canvas.style.width = "512px";
+displaysment.canvas.style.height = "512px";
+displaysment.canvas.style.top = 0;
+displaysment.canvas.style.left = 0;
+displaysment.canvas.style.zIndex = 10;
+
+displaysment.context = displaysment.canvas.getContext("2d");
+
+displaysment.context.fillRect(
+  0,
+  0,
+  displaysment.canvas.width,
+  displaysment.canvas.height
+);
+
+displaysment.glowImage = new Image();
+displaysment.glowImage.src = "./glow.png";
+
+displaysment.context.drawImage(
+  displaysment.glowImage,
+  0,
+  0,
+  displaysment.canvas.width,
+  displaysment.canvas.height
+);
+
 /**
  * Particles
  */
-const particlesGeometry = new THREE.PlaneGeometry(10, 10, 32, 32);
+const particlesGeometry = new THREE.PlaneGeometry(10, 10, 128, 128);
 
 const particlesMaterial = new THREE.ShaderMaterial({
   vertexShader: particlesVertexShader,
