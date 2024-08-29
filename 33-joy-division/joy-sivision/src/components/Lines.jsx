@@ -1,6 +1,6 @@
 import { Center } from "@react-three/drei";
-import { useRef, useEffect, useMemo } from "react";
-import * as THREE from "three";
+import { useRef, useMemo } from "react";
+import Line from "./Line";
 
 export default function Lines() {
   const lineRef = useRef();
@@ -11,14 +11,9 @@ export default function Lines() {
   return (
     <Center>
       <group ref={lineRef}>
-        {linesList.map((_, i) => {
-          return (
-            <mesh key={i} position-z={-i * 0.095}>
-              <boxGeometry args={[5, 0.03, 0.02]} />
-              <meshBasicMaterial />
-            </mesh>
-          );
-        })}
+        {linesList.map((_, i) => (
+          <Line key={i} index={i} />
+        ))}
       </group>
     </Center>
   );
