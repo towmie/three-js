@@ -2,6 +2,7 @@ uniform vec2 uResolution;
 uniform float uSize;
 attribute vec3 aPositionTarget;
 uniform float uProgress;
+attribute float aSize;
 
 #include ../includes/simplexNoise.glsl
 
@@ -29,7 +30,7 @@ void main()
     gl_Position = projectedPosition;
 
     // Point size
-    gl_PointSize = uSize * uResolution.y;
+    gl_PointSize = uSize * aSize * uResolution.y;
     gl_PointSize *= (1.0 / - viewPosition.z);
 
     vColor = vec3(noise);
