@@ -117,6 +117,7 @@ gltfLoader.load("./models.glb", (gltf) => {
   positions.forEach((position) => {
     const originalPosition = position.array;
     const newArray = new Float32Array(particles.maxCount * 3);
+    const randomIndex = Math.floor(position.count * Math.random()) * 3;
 
     for (let i = 0; i < particles.maxCount; i++) {
       const i3 = i * 3;
@@ -126,15 +127,21 @@ gltfLoader.load("./models.glb", (gltf) => {
         newArray[i3 + 1] = originalPosition[i3 + 1];
         newArray[i3 + 2] = originalPosition[i3 + 2];
       } else {
-        newArray[i3] = 0;
-        newArray[i3 + 1] = 0;
-        newArray[i3 + 2] = 0;
+        newArray[i3] = originalPosition[randomIndex + 0];
+        newArray[i3 + 1] = originalPosition[randomIndex + 1];
+        newArray[i3 + 2] = originalPosition[randomIndex + 2];
       }
     }
+
+    particles.positions.push(new THREE.Float32BufferAttribute(newArray, 3));
   });
 
+  console.log(particles.positions);
+
   // Geometry
-  particles.geometry = new THREE.SphereGeometry(3);
+  particles.geometry = new THREE.BufferGeometry();
+  particles.geometry.setAttribute("position", particles.positions[1]);
+  particles.geometry.setAttribute("aPositionTarget", particles.positions[3]);
   particles.geometry.setIndex(null);
 
   // Material
@@ -142,13 +149,14 @@ gltfLoader.load("./models.glb", (gltf) => {
     vertexShader: particlesVertexShader,
     fragmentShader: particlesFragmentShader,
     uniforms: {
-      uSize: new THREE.Uniform(0.4),
+      uSize: new THREE.Uniform(0.2),
       uResolution: new THREE.Uniform(
         new THREE.Vector2(
           sizes.width * sizes.pixelRatio,
           sizes.height * sizes.pixelRatio
         )
       ),
+      uProgress: new THREE.Uniform(0.0),
     },
     blending: THREE.AdditiveBlending,
     depthWrite: false,
@@ -157,6 +165,13 @@ gltfLoader.load("./models.glb", (gltf) => {
   // Points
   particles.points = new THREE.Points(particles.geometry, particles.material);
   scene.add(particles.points);
+
+  gui
+    .add(particles.material.uniforms.uProgress, "value")
+    .min(0.0)
+    .max(1.0)
+    .step(0.001)
+    .name("uProgress");
 });
 
 /**
