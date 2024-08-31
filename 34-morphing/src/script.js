@@ -42,10 +42,12 @@ window.addEventListener("resize", () => {
   sizes.pixelRatio = Math.min(window.devicePixelRatio, 2);
 
   // Materials
-  particles.material.uniforms.uResolution.value.set(
-    sizes.width * sizes.pixelRatio,
-    sizes.height * sizes.pixelRatio
-  );
+  if (particles) {
+    particles.material.uniforms.uResolution.value.set(
+      sizes.width * sizes.pixelRatio,
+      sizes.height * sizes.pixelRatio
+    );
+  }
 
   // Update camera
   camera.aspect = sizes.width / sizes.height;
@@ -90,35 +92,72 @@ gui.addColor(debugObject, "clearColor").onChange(() => {
 });
 renderer.setClearColor(debugObject.clearColor);
 
-/**
- * Particles
- */
-const particles = {};
+let particles = null;
 
-// Geometry
-particles.geometry = new THREE.SphereGeometry(3);
-particles.geometry.setIndex(null);
+gltfLoader.load("./models.glb", (gltf) => {
+  /**
+   * Particles
+   */
+  particles = {};
 
-// Material
-particles.material = new THREE.ShaderMaterial({
-  vertexShader: particlesVertexShader,
-  fragmentShader: particlesFragmentShader,
-  uniforms: {
-    uSize: new THREE.Uniform(0.4),
-    uResolution: new THREE.Uniform(
-      new THREE.Vector2(
-        sizes.width * sizes.pixelRatio,
-        sizes.height * sizes.pixelRatio
-      )
-    ),
-  },
-  blending: THREE.AdditiveBlending,
-  depthWrite: false,
+  const positions = gltf.scene.children.map(
+    (child) => child.geometry.attributes.position
+  );
+
+  particles.maxCount = 0;
+
+  positions.forEach((position) => {
+    if (position.count > particles.maxCount) {
+      particles.maxCount = position.count;
+    }
+  });
+
+  particles.positions = [];
+
+  positions.forEach((position) => {
+    const originalPosition = position.array;
+    const newArray = new Float32Array(particles.maxCount * 3);
+
+    for (let i = 0; i < particles.maxCount; i++) {
+      const i3 = i * 3;
+
+      if (i3 < originalPosition.length) {
+        newArray[i3] = originalPosition[i3];
+        newArray[i3 + 1] = originalPosition[i3 + 1];
+        newArray[i3 + 2] = originalPosition[i3 + 2];
+      } else {
+        newArray[i3] = 0;
+        newArray[i3 + 1] = 0;
+        newArray[i3 + 2] = 0;
+      }
+    }
+  });
+
+  // Geometry
+  particles.geometry = new THREE.SphereGeometry(3);
+  particles.geometry.setIndex(null);
+
+  // Material
+  particles.material = new THREE.ShaderMaterial({
+    vertexShader: particlesVertexShader,
+    fragmentShader: particlesFragmentShader,
+    uniforms: {
+      uSize: new THREE.Uniform(0.4),
+      uResolution: new THREE.Uniform(
+        new THREE.Vector2(
+          sizes.width * sizes.pixelRatio,
+          sizes.height * sizes.pixelRatio
+        )
+      ),
+    },
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+
+  // Points
+  particles.points = new THREE.Points(particles.geometry, particles.material);
+  scene.add(particles.points);
 });
-
-// Points
-particles.points = new THREE.Points(particles.geometry, particles.material);
-scene.add(particles.points);
 
 /**
  * Animate
