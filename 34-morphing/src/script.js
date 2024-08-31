@@ -99,6 +99,7 @@ gltfLoader.load("./models.glb", (gltf) => {
    * Particles
    */
   particles = {};
+  particles.index = 0;
 
   const positions = gltf.scene.children.map(
     (child) => child.geometry.attributes.position
@@ -140,7 +141,10 @@ gltfLoader.load("./models.glb", (gltf) => {
 
   // Geometry
   particles.geometry = new THREE.BufferGeometry();
-  particles.geometry.setAttribute("position", particles.positions[1]);
+  particles.geometry.setAttribute(
+    "position",
+    particles.positions[particles.index]
+  );
   particles.geometry.setAttribute("aPositionTarget", particles.positions[3]);
   particles.geometry.setIndex(null);
 
@@ -165,6 +169,30 @@ gltfLoader.load("./models.glb", (gltf) => {
   // Points
   particles.points = new THREE.Points(particles.geometry, particles.material);
   scene.add(particles.points);
+
+  particles.morph = (index) => {
+    particles.geometry.attributes.position =
+      particles.positions[particles.index];
+    particles.geometry.attributes.aPositionTarget = particles.positions[index];
+
+    gsap.fromTo(
+      particles.material.uniforms.uProgress,
+      { value: 0 },
+      { value: 1, duration: 1, ease: "linear" }
+    );
+
+    particles.index = index;
+  };
+
+  particles.morph0 = () => particles.morph(0);
+  particles.morph1 = () => particles.morph(1);
+  particles.morph2 = () => particles.morph(2);
+  particles.morph3 = () => particles.morph(3);
+
+  gui.add(particles, "morph0").name("Torus");
+  gui.add(particles, "morph1").name("Suzanne");
+  gui.add(particles, "morph2").name("Sphere");
+  gui.add(particles, "morph3").name("Text");
 
   gui
     .add(particles.material.uniforms.uProgress, "value")
