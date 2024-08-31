@@ -157,6 +157,9 @@ gltfLoader.load("./models.glb", (gltf) => {
   particles.geometry.setIndex(null);
 
   // Material
+  particles.colorA = "#ff7300";
+  particles.colorB = "#0091ff";
+
   particles.material = new THREE.ShaderMaterial({
     vertexShader: particlesVertexShader,
     fragmentShader: particlesFragmentShader,
@@ -169,6 +172,8 @@ gltfLoader.load("./models.glb", (gltf) => {
         )
       ),
       uProgress: new THREE.Uniform(0.0),
+      uColorA: new THREE.Uniform(new THREE.Color(particles.colorA)),
+      uColorB: new THREE.Uniform(new THREE.Color(particles.colorB)),
     },
     blending: THREE.AdditiveBlending,
     depthWrite: false,
@@ -201,6 +206,13 @@ gltfLoader.load("./models.glb", (gltf) => {
   gui.add(particles, "morph1").name("Suzanne");
   gui.add(particles, "morph2").name("Sphere");
   gui.add(particles, "morph3").name("Text");
+
+  gui.addColor(particles, "colorA").onChange(() => {
+    particles.material.uniforms.uColorA.value.set(particles.colorA);
+  });
+  gui.addColor(particles, "colorB").onChange(() => {
+    particles.material.uniforms.uColorB.value.set(particles.colorB);
+  });
 
   gui
     .add(particles.material.uniforms.uProgress, "value")

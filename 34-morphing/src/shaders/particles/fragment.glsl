@@ -1,5 +1,6 @@
 varying vec3 vColor;
 
+
 void main()
 {
     vec2 uv = gl_PointCoord;
