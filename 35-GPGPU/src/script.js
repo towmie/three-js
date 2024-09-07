@@ -130,6 +130,7 @@ gpgpu.particlesVariables = gpgpu.computation.addVariable(
 gpgpu.computation.setVariableDependencies(gpgpu.particlesVariables, [
   gpgpu.particlesVariables,
 ]);
+gpgpu.particlesVariables.material.uniforms.uTime = { value: 0.0 };
 gpgpu.computation.init();
 
 // debug
@@ -229,6 +230,7 @@ const tick = () => {
   // Update controls
   controls.update();
 
+  gpgpu.particlesVariables.material.uniforms.uTime.value = elapsedTime;
   gpgpu.computation.compute();
 
   particles.material.uniforms.uParticlesTexture.value =
