@@ -87,6 +87,7 @@ renderer.setPixelRatio(sizes.pixelRatio);
 debugObject.clearColor = "#29191f";
 renderer.setClearColor(debugObject.clearColor);
 
+const gltf = await gltfLoader.loadAsync("./model.glb");
 // Base geometry
 const baseGeometry = {
   instance: new THREE.SphereGeometry(3),
@@ -125,6 +126,7 @@ gpgpu.particlesVariables = gpgpu.computation.addVariable(
   gpgpuParticlesShader,
   baseParticlesTexture
 );
+
 gpgpu.computation.setVariableDependencies(gpgpu.particlesVariables, [
   gpgpu.particlesVariables,
 ]);
@@ -145,8 +147,24 @@ scene.add(gpgpu.debug);
  * Particles
  */
 const particles = {};
+const particlesUvArray = new Float32Array(baseGeometry.count * 2);
+
+for (let y = 0; y < gpgpu.size; y++) {
+  for (let x = 0; x < gpgpu.size; x++) {
+    const i = y * gpgpu.size + x;
+    const i2 = i * 2;
+
+    const uvX = (x + 0.5) / gpgpu.size;
+    const uvY = (y + 0.5) / gpgpu.size;
+
+    particlesUvArray[i2] = uvX;
+    particlesUvArray[i2 + 1] = uvY;
+  }
+}
 
 // Geometry
+particles.geometry = new THREE.BufferGeometry();
+particles.geometry.setDrawRange(0, baseGeometry.count);
 
 // Material
 particles.material = new THREE.ShaderMaterial({
@@ -160,11 +178,16 @@ particles.material = new THREE.ShaderMaterial({
         sizes.height * sizes.pixelRatio
       )
     ),
+    uParticlesTexture: new THREE.Uniform(),
   },
 });
 
+particles.geometry.setAttribute(
+  "aParticlesUv",
+  new THREE.BufferAttribute(particlesUvArray, 2)
+);
 // Points
-particles.points = new THREE.Points(baseGeometry.instance, particles.material);
+particles.points = new THREE.Points(particles.geometry, particles.material);
 scene.add(particles.points);
 
 /**
@@ -195,6 +218,9 @@ const tick = () => {
   controls.update();
 
   gpgpu.computation.compute();
+
+  particles.material.uniforms.uParticlesTexture.value =
+    gpgpu.computation.getCurrentRenderTarget(gpgpu.particlesVariables).texture;
 
   // Render normal scene
   renderer.render(scene, camera);
