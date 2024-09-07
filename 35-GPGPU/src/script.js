@@ -118,7 +118,7 @@ for (let i = 0; i < baseGeometry.count; i++) {
     baseGeometry.instance.attributes.position.array[i3 + 1];
   baseParticlesTexture.image.data[i4 + 2] =
     baseGeometry.instance.attributes.position.array[i3 + 2];
-  baseParticlesTexture.image.data[i4 + 3] = 0;
+  baseParticlesTexture.image.data[i4 + 3] = Math.random();
 }
 
 gpgpu.particlesVariables = gpgpu.computation.addVariable(
@@ -131,6 +131,13 @@ gpgpu.computation.setVariableDependencies(gpgpu.particlesVariables, [
   gpgpu.particlesVariables,
 ]);
 gpgpu.particlesVariables.material.uniforms.uTime = { value: 0.0 };
+gpgpu.particlesVariables.material.uniforms.uDeltaTime = { value: 0.0 };
+gpgpu.particlesVariables.material.uniforms.uBase = new THREE.Uniform(
+  baseParticlesTexture
+);
+gpgpu.particlesVariables.material.uniforms.uInfluence = new THREE.Uniform(0.5);
+gpgpu.particlesVariables.material.uniforms.uStrength = new THREE.Uniform(2);
+
 gpgpu.computation.init();
 
 // debug
@@ -215,7 +222,18 @@ gui
   .max(1)
   .step(0.001)
   .name("uSize");
-
+gui
+  .add(gpgpu.particlesVariables.material.uniforms.uInfluence, "value")
+  .min(0)
+  .max(1)
+  .step(0.01)
+  .name("uInfluence");
+gui
+  .add(gpgpu.particlesVariables.material.uniforms.uStrength, "value")
+  .min(0)
+  .max(10)
+  .step(0.01)
+  .name("uStrength");
 /**
  * Animate
  */
@@ -231,6 +249,7 @@ const tick = () => {
   controls.update();
 
   gpgpu.particlesVariables.material.uniforms.uTime.value = elapsedTime;
+  gpgpu.particlesVariables.material.uniforms.uDeltaTime.value = deltaTime;
   gpgpu.computation.compute();
 
   particles.material.uniforms.uParticlesTexture.value =
