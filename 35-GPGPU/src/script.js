@@ -90,7 +90,7 @@ renderer.setClearColor(debugObject.clearColor);
 const gltf = await gltfLoader.loadAsync("./model.glb");
 // Base geometry
 const baseGeometry = {
-  instance: new THREE.SphereGeometry(3),
+  instance: gltf.scene.children[0].geometry,
 };
 
 baseGeometry.count = baseGeometry.instance.attributes.position.count;
@@ -148,6 +148,7 @@ scene.add(gpgpu.debug);
  */
 const particles = {};
 const particlesUvArray = new Float32Array(baseGeometry.count * 2);
+const sizesvArray = new Float32Array(baseGeometry.count);
 
 for (let y = 0; y < gpgpu.size; y++) {
   for (let x = 0; x < gpgpu.size; x++) {
@@ -159,6 +160,8 @@ for (let y = 0; y < gpgpu.size; y++) {
 
     particlesUvArray[i2] = uvX;
     particlesUvArray[i2 + 1] = uvY;
+
+    sizesvArray[i] = Math.random();
   }
 }
 
@@ -171,7 +174,7 @@ particles.material = new THREE.ShaderMaterial({
   vertexShader: particlesVertexShader,
   fragmentShader: particlesFragmentShader,
   uniforms: {
-    uSize: new THREE.Uniform(0.4),
+    uSize: new THREE.Uniform(0.07),
     uResolution: new THREE.Uniform(
       new THREE.Vector2(
         sizes.width * sizes.pixelRatio,
@@ -185,6 +188,15 @@ particles.material = new THREE.ShaderMaterial({
 particles.geometry.setAttribute(
   "aParticlesUv",
   new THREE.BufferAttribute(particlesUvArray, 2)
+);
+
+particles.geometry.setAttribute(
+  "aColor",
+  baseGeometry.instance.attributes.color
+);
+particles.geometry.setAttribute(
+  "aSize",
+  new THREE.BufferAttribute(sizesvArray, 1)
 );
 // Points
 particles.points = new THREE.Points(particles.geometry, particles.material);
