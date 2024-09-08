@@ -46,6 +46,9 @@ rgbeLoader.load("./urban_alley_01_1k.hdr", (environmentMap) => {
  */
 // Material
 
+debugObject.colorA = "#ff0000";
+debugObject.colorB = "#0000ff";
+
 const uniforms = {
   uTime: new THREE.Uniform(0.0),
   uPositionFrequency: new THREE.Uniform(0.5),
@@ -54,6 +57,8 @@ const uniforms = {
   uWrapPositionFrequency: new THREE.Uniform(0.38),
   uWrapTimeFrequency: new THREE.Uniform(0.12),
   uWrapStrength: new THREE.Uniform(1.7),
+  uColorA: new THREE.Uniform(new THREE.Color(debugObject.colorA)),
+  uColorB: new THREE.Uniform(new THREE.Color(debugObject.colorB)),
 };
 
 const material = new CustomShaderMaterial({
@@ -95,12 +100,18 @@ gui
   .name("uWrapTimeFrequency");
 gui.add(uniforms.uWrapStrength, "value", 0, 2, 0.001).name("uWrapStrength");
 
+gui.addColor(debugObject, "colorA").onChange((value) => {
+  uniforms.uColorA.value = new THREE.Color(value);
+});
+gui.addColor(debugObject, "colorB").onChange((value) => {
+  uniforms.uColorB.value = new THREE.Color(value);
+});
+
 gui.add(material, "metalness", 0, 1, 0.001);
 gui.add(material, "roughness", 0, 1, 0.001);
 gui.add(material, "transmission", 0, 1, 0.001);
 gui.add(material, "ior", 0, 10, 0.001);
 gui.add(material, "thickness", 0, 10, 0.001);
-gui.addColor(material, "color");
 
 // Geometry
 let geometry = new THREE.IcosahedronGeometry(2.5, 50);

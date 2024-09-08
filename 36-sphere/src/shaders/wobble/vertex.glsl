@@ -8,6 +8,7 @@ uniform float uPositionFrequency;
 uniform float uWrapPositionFrequency;
 uniform float uWrapTimeFrequency;
 uniform float uWrapStrength;
+varying float vWobble;
 
 float getWobble(vec3 position){
    vec3 warpedPosition = position;
@@ -34,5 +35,5 @@ void main() {
    csm_Normal = cross(toA, toB);
    vUv = uv;
 
-
+   vWobble = wobble / uStrength;
 }
