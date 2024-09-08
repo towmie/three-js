@@ -51,6 +51,9 @@ const uniforms = {
   uPositionFrequency: new THREE.Uniform(0.5),
   uTimeFrequency: new THREE.Uniform(0.4),
   uStrength: new THREE.Uniform(0.3),
+  uWrapPositionFrequency: new THREE.Uniform(0.38),
+  uWrapTimeFrequency: new THREE.Uniform(0.12),
+  uWrapStrength: new THREE.Uniform(1.7),
 };
 
 const material = new CustomShaderMaterial({
@@ -83,6 +86,15 @@ gui
   .name("uPositionFrequency");
 gui.add(uniforms.uTimeFrequency, "value", 0, 2, 0.001).name("uTimeFrequency");
 gui.add(uniforms.uStrength, "value", 0, 2, 0.001).name("uStrength");
+
+gui
+  .add(uniforms.uWrapPositionFrequency, "value", 0, 2, 0.001)
+  .name("uWrapPositionFrequency");
+gui
+  .add(uniforms.uWrapTimeFrequency, "value", 0, 2, 0.001)
+  .name("uWrapTimeFrequency");
+gui.add(uniforms.uWrapStrength, "value", 0, 2, 0.001).name("uWrapStrength");
+
 gui.add(material, "metalness", 0, 1, 0.001);
 gui.add(material, "roughness", 0, 1, 0.001);
 gui.add(material, "transmission", 0, 1, 0.001);
