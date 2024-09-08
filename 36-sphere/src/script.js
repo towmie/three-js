@@ -128,15 +128,15 @@ scene.add(wobble);
 /**
  * Plane
  */
-const plane = new THREE.Mesh(
-  new THREE.PlaneGeometry(15, 15, 15),
-  new THREE.MeshStandardMaterial()
-);
-plane.receiveShadow = true;
-plane.rotation.y = Math.PI;
-plane.position.y = -5;
-plane.position.z = 5;
-scene.add(plane);
+// const plane = new THREE.Mesh(
+//   new THREE.PlaneGeometry(15, 15, 15),
+//   new THREE.MeshStandardMaterial()
+// );
+// plane.receiveShadow = true;
+// plane.rotation.y = Math.PI;
+// plane.position.y = -5;
+// plane.position.z = 5;
+// scene.add(plane);
 
 /**
  * Lights
