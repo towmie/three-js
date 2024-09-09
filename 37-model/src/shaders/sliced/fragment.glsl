@@ -13,6 +13,5 @@ void main() {
     if(angle > 0.0 && angle <   uSliceArc) {
         discard;
     } 
-
-    csm_FragColor = vec4(vec3(angle), 1.0);
+    float csm_Slice;
 }

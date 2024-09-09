@@ -33,6 +33,17 @@ const uniforms = {
   uSliceArc: new THREE.Uniform(1.25),
 };
 
+const patchMap = {
+  csm_Slice: {
+    "#include <colorspace_fragment>": `
+    #include <colorspace_fragment>
+
+    if(!gl_FrontFacing) {
+        gl_FragColor = vec4(0.75, 0.15, 0.3, 1.0);
+    }
+    `,
+  },
+};
 gui
   .add(uniforms.uSliceStart, "value")
   .min(-Math.PI)
@@ -76,9 +87,11 @@ const slicedMaterial = new CustomShaderMaterial({
   fragmentShader: fragment,
   uniforms: uniforms,
   metalness: 0.5,
+  patchMap: patchMap,
   roughness: 0.25,
   envMapIntensity: 0.5,
   color: "#858080",
+  side: THREE.DoubleSide,
 });
 
 gltfLoader.load("./gears.glb", (gltf) => {
