@@ -28,9 +28,24 @@ dracoLoader.setDecoderPath("./draco/");
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
 
-/**
- * Environment map
- */
+const uniforms = {
+  uSliceStart: new THREE.Uniform(1.75),
+  uSliceArc: new THREE.Uniform(1.25),
+};
+
+gui
+  .add(uniforms.uSliceStart, "value")
+  .min(-Math.PI)
+  .max(Math.PI)
+  .step(0.001)
+  .name("uSliceStart");
+gui
+  .add(uniforms.uSliceArc, "value")
+  .min(0)
+  .max(Math.PI * 2)
+  .step(0.001)
+  .name("uSliceArc");
+
 rgbeLoader.load("./aerodynamics_workshop.hdr", (environmentMap) => {
   environmentMap.mapping = THREE.EquirectangularReflectionMapping;
 
@@ -59,6 +74,7 @@ const slicedMaterial = new CustomShaderMaterial({
   silent: true,
   vertexShader: vertex,
   fragmentShader: fragment,
+  uniforms: uniforms,
   metalness: 0.5,
   roughness: 0.25,
   envMapIntensity: 0.5,
