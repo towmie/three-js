@@ -7,8 +7,10 @@ void main() {
 
 
     float angle = atan(vPosition.y, vPosition.x);
+    angle -= uSliceStart;
+    angle = mod(angle, PI * 2.0);
 
-    if(angle > uSliceStart && angle < uSliceStart + uSliceArc) {
+    if(angle > 0.0 && angle <   uSliceArc) {
         discard;
     } 
 
